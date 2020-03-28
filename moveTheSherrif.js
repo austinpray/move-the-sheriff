@@ -49,7 +49,7 @@ const MoveTheSherrif = () => {
 
   return (
     <Box flexDirection="column">
-      <BigText text={'Move the\nsherrif'} align={'center'} />
+      <BigText text={'Move the\nsheriff'} align={'center'} />
 
       <Box flexDirection="column">
         <Box marginTop={y} marginLeft={x}>🤠</Box>
