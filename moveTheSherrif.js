@@ -14,7 +14,7 @@ const MoveTheSherrif = () => {
   useInput((input, key) => {
     const height = ((windowY - 20) / 1);
 
-    if (key.upArrow) {
+    if (key.upArrow || input == "w") {
       if (y - 1 < 1) {
         setY(height - 1)
       } else {
@@ -22,7 +22,7 @@ const MoveTheSherrif = () => {
       }
     }
 
-    if (key.downArrow) {
+    if (key.downArrow || input == "s") {
       if (y + 1 > height) {
         setY(1)
       } else {
@@ -30,7 +30,7 @@ const MoveTheSherrif = () => {
       }
     }
 
-    if (key.leftArrow) {
+    if (key.leftArrow || input == "a") {
       if (x - 1 < 1) {
         setX(windowX - 1)
       } else {
@@ -38,7 +38,7 @@ const MoveTheSherrif = () => {
       }
     }
 
-    if (key.rightArrow) {
+    if (key.rightArrow || input == "d") {
       if (x + 1 > windowX) {
         setX(1)
       } else {
