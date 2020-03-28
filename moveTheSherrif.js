@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
-import { Box, Text, Color, useInput } from 'ink'
-import BigText from 'ink-big-text'
-import useStdoutDimensions from 'ink-use-stdout-dimensions'
+const React = require('react');
+const {Box, Text, Color, useInput, render} = require('ink');
+const BigText = require('ink-big-text');
+const useStdoutDimensions = require('ink-use-stdout-dimensions');
 
 /**
  * Move the Sherrif
  */
 const MoveTheSherrif = () => {
   const [ windowX, windowY ] = useStdoutDimensions();
-  const [x, setX] = useState(windowX / 2)
-  const [y, setY] = useState((windowY - 20) / 2)
+  const [x, setX] = React.useState(windowX / 2)
+  const [y, setY] = React.useState((windowY - 20) / 2)
 
   useInput((input, key) => {
     const height = ((windowY - 20) / 1);
@@ -58,4 +58,4 @@ const MoveTheSherrif = () => {
   )
 }
 
-export default MoveTheSherrif;
+render(<MoveTheSherrif/>);
