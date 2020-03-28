@@ -4,9 +4,9 @@ const BigText = require('ink-big-text');
 const useStdoutDimensions = require('ink-use-stdout-dimensions');
 
 /**
- * Move the Sherrif
+ * Move the Sheriff
  */
-const MoveTheSherrif = () => {
+const MoveTheSheriff = () => {
   const [ windowX, windowY ] = useStdoutDimensions();
   const [x, setX] = React.useState(windowX / 2)
   const [y, setY] = React.useState((windowY - 20) / 2)
@@ -58,4 +58,4 @@ const MoveTheSherrif = () => {
   )
 }
 
-render(<MoveTheSherrif/>);
+render(<MoveTheSheriff/>);
