@@ -1,80 +1,75 @@
-use std::cmp;
 use std::process::exit;
 
 use ctrlc;
-use pancurses::{curs_set, endwin, initscr, Input, noecho, Window};
+use pancurses::{curs_set, endwin, initscr, Input, noecho};
 use quicli::prelude::*;
 use structopt::StructOpt;
-use tokio::net::TcpStream;
-use tokio::prelude::*;
+//use tokio::net::TcpStream;
 use uuid::Uuid;
+
+use crate::engine::input::handle_input;
+use crate::engine::state::{Entity, State, tick};
+use crate::engine::state::CommandName::*;
+
+mod engine;
 
 #[derive(Debug, StructOpt)]
 struct Cli {
-    #[structopt(long = "server", short = "s", default_value = "127.0.0.1:6142")]
-    server: String,
+    #[structopt(long = "join", short = "j")]
+    join: String,
     #[structopt(long = "username", short = "u", default_value = "anonymous")]
     username: String,
 }
 
-struct Sheriff {
-    username: String,
-    id: String,
-    x: i32,
-    y: i32,
-}
-
-fn draw_window(window: &Window, sheriff: &Sheriff) {
-    window.clear();
-    window.printw(format!("Welcome {} {}, Move the Sheriff! press <q> to quit\n", sheriff.username, sheriff.id));
-    window.mvprintw(sheriff.y, sheriff.x, "🤠");
-    window.refresh();
-}
-
 #[tokio::main]
 pub async fn main() -> CliResult {
-    let args = Cli::from_args();
-    let username = args.username;
-    let addr = args.server;
+    //let args = Cli::from_args();
+    //let username = String::from(&args.username[..15]);
+    //let addr = args.join;
 
-    let mut stream = TcpStream::connect(addr).await.unwrap();
-    println!("created stream");
+    //let stream;
+    //if addr.len() > 0 {
+    //    stream = TcpStream::connect(addr).await.unwrap();
+    //}
 
     let window = initscr();
+    window.nodelay(true);
     curs_set(0);
+    noecho();
 
     ctrlc::set_handler(move || {
-        println!("received Ctrl+C!");
         endwin();
         exit(0)
-    })
-        .expect("Error setting Ctrl-C handler");
+    }).expect("Error setting Ctrl-C handler");
 
-    let mut sheriff = Sheriff { username: username, id: Uuid::new_v4().to_string(), x: 10, y: 10 };
+    let cid = Uuid::new_v4().to_string();
+    let cactus = Entity::new(cid.as_str(), "🌵");
+    let sid = Uuid::new_v4().to_string();
+    let sheriff = Entity::new(sid.as_str(), "🤠");
 
-    draw_window(&window, &sheriff);
+    let mut state = State::new();
+    state.add_entity(sheriff);
+    state.add_entity(cactus);
 
-    noecho();
     loop {
         match window.getch() {
             Some(Input::Character(c)) => {
-                if c == 'q' {
-                    break;
+                match state.get_entity(&sheriff.id()) {
+                    None => {},
+                    Some(&player) => {
+                        match handle_input(c, &player).name {
+                            Quit => break,
+                            Continue => {}
+                            Pos => {}
+                        }
+                    },
                 }
-                match c {
-                    'w' | 'k' => sheriff.y = cmp::max(sheriff.y - 1, 0),
-                    'a' | 'h' => sheriff.x = cmp::max(sheriff.x - 1, 0),
-                    's' | 'j' => sheriff.y = cmp::min(sheriff.y + 1, window.get_max_y() - 1),
-                    'd' | 'l' => sheriff.x = cmp::min(sheriff.x + 1, window.get_max_x() - 2),
-                    _ => (),
-                }
-                draw_window(&window, &sheriff);
-                stream.write(c.to_string().as_bytes()).await;
-                ()
+                //stream.write(c.to_string().as_bytes()).await;
             }
-            Some(input) => {}
+            Some(_input) => {}
             None => {}
         }
+        tick(&window, &state);
     }
     endwin();
 
