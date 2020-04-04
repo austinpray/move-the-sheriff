@@ -1,10 +1,12 @@
-name: Rust
+name: TUI Rust Build
 
 on:
   push:
-    branches: [ master ]
+    paths:
+      - 'tui/**'
   pull_request:
-    branches: [ master ]
+    paths:
+      - 'tui/**'
 
 jobs:
   build:
@@ -18,6 +20,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libncurses-dev
       - name: Build
+        working-directory: tui
         run: cargo build --verbose
       - name: Run tests
+        working-directory: tui
         run: cargo test --verbose
