@@ -4,10 +4,13 @@ use std::process::exit;
 use ctrlc;
 use pancurses::{curs_set, endwin, initscr, Input, noecho, Window};
 use quicli::prelude::*;
+use rand::{Rng, thread_rng};
 use structopt::StructOpt;
 //use tokio::net::TcpStream;
 //use tokio::prelude::*;
 use uuid::Uuid;
+
+use indoc::indoc;
 
 use crate::engine::*;
 
@@ -45,18 +48,53 @@ pub async fn main() -> CliResult {
     let mut sheriff = Entity {
         name: "sheriff".to_string(),
         model: "🤠".to_string(),
+        //model: "M".to_string(),
         id: player_id.clone(),
         x: 10,
         y: 10,
     };
 
+
     let mut state = State {
         current: "game".to_string(),
+        stage_max_x: window.get_max_x(),
+        stage_max_y: window.get_max_y(),
         entities: Default::default(),
     };
 
     state.entities.insert(sheriff.id.clone(), sheriff);
 
+    let id = Uuid::new_v4().to_string();
+    state.entities.insert(id.clone(), Entity {
+        name: "cactus".to_string(),
+        model: "🌵".to_string(),
+        id,
+        x: 12,
+        y: 12,
+    });
+
+    let id = Uuid::new_v4().to_string();
+    state.entities.insert(id.clone(), Entity {
+        name: "desert".to_string(),
+        model: indoc!("🏜️🌵🌵
+                       🌵🦂🌵️").to_string(),
+        id,
+        x: 13,
+        y: 14,
+    });
+
+    let mut rng = thread_rng();
+
+    for _ in 1..=5 {
+        let id = Uuid::new_v4().to_string();
+        state.entities.insert(id.clone(), Entity {
+            name: "cactus".to_string(),
+            model: "🌵".to_string(),
+            id,
+            x: rng.gen_range(0, window.get_max_x() - 2),
+            y: rng.gen_range(2, window.get_max_y() - 2),
+        });
+    }
 
     loop {
         draw_window(&window, &state);
@@ -65,7 +103,7 @@ pub async fn main() -> CliResult {
                 if c == 'q' {
                     break;
                 }
-                handle_input(&mut state, &window, &player_id, c);
+                handle_input(&mut state, &player_id, c);
                 //stream.write(c.to_string().as_bytes()).await;
                 ()
             }

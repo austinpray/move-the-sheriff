@@ -1,5 +1,5 @@
 use std::cmp;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use pancurses::Window;
 
@@ -14,12 +14,53 @@ pub struct Entity {
 pub struct State {
     pub current: String,
     pub entities: HashMap<String, Entity>,
+    pub stage_max_x: i32,
+    pub stage_max_y: i32
+}
+
+impl State {
+    pub fn handle_move(self: &mut Self, id: &String, requested_x: i32, requested_y: i32) {
+        let mut other_entity_positions: HashSet<(i32, i32)> = HashSet::new();
+        for (_id, other_entity) in self.entities.iter() {
+            other_entity_positions.insert((other_entity.x, other_entity.y));
+            //other_entity_positions.insert((other_entity.x+1, other_entity.y+1));
+        }
+
+        match self.entities.get_mut(id) {
+            None => {
+                return;
+            }
+            Some(entity) => {
+                let mut new_x = entity.x + requested_x;
+                let mut new_y = entity.y + requested_y;
+
+                // don't escape the stage!
+                new_x = cmp::max(new_x, 0);
+                new_x = cmp::min(new_x, self.stage_max_x - 2);
+                new_y = cmp::max(new_y, 0);
+                new_y = cmp::min(new_y, self.stage_max_y - 1);
+
+                // don't collide with other entities!
+                if other_entity_positions.contains(&(new_x, new_y)) {
+                    return;
+                }
+
+                entity.x = new_x;
+                entity.y = new_y;
+            }
+        }
+    }
 }
 
 fn draw_main_stage(window: &Window, state: &State) {
     window.printw(format!("Welcome to “Move the Sheriff”! press <q> to quit\n"));
     for (_id, entity) in state.entities.iter() {
-        window.mvprintw(entity.y, entity.x, &entity.model);
+        let model = &entity.model;
+        let mut line_number = 0;
+        for line in model.split('\n') {
+            window.mvprintw(entity.y + line_number, entity.x, line);
+            line_number += 1;
+        }
     }
 }
 
@@ -29,20 +70,13 @@ pub fn draw_window(window: &Window, state: &State) {
     window.refresh();
 }
 
-pub fn handle_input(state: &mut State, window: &Window, id: &String, input: char) {
-    match state.entities.get_mut(id) {
-        None => {
-            return;
-        }
-        Some(entity) => {
-            match input {
-                'w' | 'k' => entity.y = cmp::max(entity.y - 1, 0),
-                'a' | 'h' => entity.x = cmp::max(entity.x - 1, 0),
-                's' | 'j' => entity.y = cmp::min(entity.y + 1, window.get_max_y() - 1),
-                'd' | 'l' => entity.x = cmp::min(entity.x + 1, window.get_max_x() - 2),
-                _ => (),
-            }
-        }
+pub fn handle_input(state: &mut State, id: &String, input: char) {
+    match input {
+        'w' | 'k' => state.handle_move(id, 0, -1),
+        'a' | 'h' => state.handle_move(id, -1, 0),
+        's' | 'j' => state.handle_move(id, 0, 1),
+        'd' | 'l' => state.handle_move(id, 1, 0),
+        _ => (),
     }
 }
 

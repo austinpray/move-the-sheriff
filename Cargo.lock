@@ -434,6 +434,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "indoc"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "79255cf29f5711995ddf9ec261b4057b1deb34e66c90656c201e41376872c544"
+dependencies = [
+ "indoc-impl",
+ "proc-macro-hack",
+]
+
+[[package]]
+name = "indoc-impl"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "54554010aa3d17754e484005ea0022f1c93839aabc627c2c55f3d7b47206134c"
+dependencies = [
+ "proc-macro-hack",
+ "proc-macro2 1.0.9",
+ "quote 1.0.3",
+ "syn 1.0.17",
+ "unindent",
+]
+
+[[package]]
 name = "iovec"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -564,8 +587,10 @@ version = "2.0.0"
 dependencies = [
  "ctrlc",
  "futures",
+ "indoc",
  "pancurses",
  "quicli",
+ "rand",
  "structopt",
  "tokio",
  "uuid",
@@ -1046,6 +1071,12 @@ name = "unicode-xid"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "826e7639553986605ec5979c7dd957c7895e93eabed50ab2ffa7f6128a75097c"
+
+[[package]]
+name = "unindent"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "63f18aa3b0e35fed5a0048f029558b1518095ffe2a0a31fb87c93dece93a4993"
 
 [[package]]
 name = "uuid"
