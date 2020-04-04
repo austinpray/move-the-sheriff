@@ -593,6 +593,7 @@ dependencies = [
  "rand",
  "structopt",
  "tokio",
+ "unicode-width",
  "uuid",
 ]
 

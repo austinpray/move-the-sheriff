@@ -13,6 +13,7 @@ use uuid::Uuid;
 use indoc::indoc;
 
 use crate::engine::*;
+use unicode_width::UnicodeWidthStr;
 
 mod engine;
 
@@ -68,31 +69,57 @@ pub async fn main() -> CliResult {
     state.entities.insert(id.clone(), Entity {
         name: "cactus".to_string(),
         model: "🌵".to_string(),
-        id,
-        x: 12,
+        //model: "X".to_string(),
+        id: id.clone(),
+        x: 16,
+        y: 10,
+    });
+
+    let id = Uuid::new_v4().to_string();
+    state.entities.insert(id.clone(), Entity {
+        name: "cow".to_string(),
+        model: "🐄".to_string(),
+        //model: "X".to_string(),
+        id: id.clone(),
+        x: 20,
         y: 12,
     });
 
     let id = Uuid::new_v4().to_string();
     state.entities.insert(id.clone(), Entity {
         name: "desert".to_string(),
-        model: indoc!("🏜️🌵🌵
+        model: indoc!("🦂🌵🌵
                        🌵🦂🌵️").to_string(),
-        id,
-        x: 13,
+        //model: indoc!("XXX
+        //               MMM").to_string(),
+        id: id.clone(),
+        x: 16,
         y: 14,
     });
 
     let mut rng = thread_rng();
 
-    for _ in 1..=5 {
+    let id = Uuid::new_v4().to_string();
+    state.entities.insert(id.clone(), Entity {
+        name: "horse".to_string(),
+        model: "🐎".to_string(),
+        //model: "X".to_string(),
+        id: id.clone(),
+        x: rng.gen_range(30, window.get_max_x() - 2),
+        y: rng.gen_range(1, window.get_max_y() - 2),
+    });
+
+    for _ in 1..=15 {
         let id = Uuid::new_v4().to_string();
+        let x = rng.gen_range(0, window.get_max_x() - 2);
+        let y = rng.gen_range(1, window.get_max_y() - 2);
+
         state.entities.insert(id.clone(), Entity {
             name: "cactus".to_string(),
             model: "🌵".to_string(),
             id,
-            x: rng.gen_range(0, window.get_max_x() - 2),
-            y: rng.gen_range(2, window.get_max_y() - 2),
+            x,
+            y,
         });
     }
 

@@ -17,3 +17,4 @@ tokio = { version = "0.2", features = ["full"] }
 uuid = { version = "0.8", features = ["v4"] }
 rand = "0.7.3"
 indoc = "0.3"
+unicode-width = "0.1.7"
