@@ -25,19 +25,19 @@ jobs:
           sudo apt-get install -y libncurses-dev
       - name: libsheriff Build
         working-directory: libsheriff
-        run: cargo build --verbose
+        run: cargo build
       - name: libsheriff tests
         working-directory: libsheriff
-        run: cargo test --verbose
+        run: cargo test
       - name: TUI Build
         working-directory: tui
-        run: cargo build --verbose
+        run: cargo build
       - name: TUI tests
         working-directory: tui
-        run: cargo test --verbose
+        run: cargo test
       - name: Server Build
         working-directory: server
-        run: cargo build --verbose
+        run: cargo build
       - name: Server Tests
         working-directory: server
-        run: cargo test --verbose
+        run: cargo test
