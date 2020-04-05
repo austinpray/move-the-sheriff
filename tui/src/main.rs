@@ -1,8 +1,7 @@
-use std::cmp;
 use std::process::exit;
 
 use ctrlc;
-use pancurses::{curs_set, endwin, initscr, Input, noecho, Window};
+use pancurses::{curs_set, endwin, initscr, Input, noecho};
 use quicli::prelude::*;
 use rand::{Rng, thread_rng};
 use structopt::StructOpt;
@@ -13,7 +12,7 @@ use uuid::Uuid;
 use indoc::indoc;
 
 use crate::engine::*;
-use unicode_width::UnicodeWidthStr;
+use libsheriff::{Entity, State};
 
 mod engine;
 
@@ -46,7 +45,7 @@ pub async fn main() -> CliResult {
 
     let player_id = Uuid::new_v4().to_string();
 
-    let mut sheriff = Entity {
+    let sheriff = Entity {
         name: "sheriff".to_string(),
         model: "🤠".to_string(),
         //model: "M".to_string(),
