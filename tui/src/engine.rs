@@ -4,10 +4,10 @@ use std::str::Lines;
 
 use pancurses::Window;
 use unicode_width::UnicodeWidthStr;
-use libsheriff::State;
+use libsheriff::Game;
 
 
-fn draw_main_stage(window: &Window, state: &State) {
+fn draw_main_stage(window: &Window, state: &Game) {
     window.printw(format!("Welcome to “Move the Sheriff”! press <q> to quit\n"));
     for (_id, entity) in state.entities.iter() {
         let mut line_number = 0;
@@ -18,13 +18,13 @@ fn draw_main_stage(window: &Window, state: &State) {
     }
 }
 
-pub fn draw_window(window: &Window, state: &State) {
+pub fn draw_window(window: &Window, state: &Game) {
     window.erase();
     draw_main_stage(&window, &state);
     window.refresh();
 }
 
-pub fn handle_input(state: &mut State, id: &String, input: char) {
+pub fn handle_input(state: &mut Game, id: &String, input: char) {
     match input {
         'w' | 'k' => state.handle_move(id, 0, -1),
         'a' | 'h' => state.handle_move(id, -1, 0),

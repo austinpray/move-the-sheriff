@@ -1,11 +1,12 @@
 #[cfg(test)]
 mod tests {
-    use libsheriff::{Entity, State};
+    use libsheriff::{Entity, Game};
+
+
 
     #[test]
     fn test_moving() {
-        let mut state = State {
-            current: "game".to_string(),
+        let mut state = Game {
             stage_max_x: 10,
             stage_max_y: 5,
             entities: Default::default(),

@@ -2,8 +2,13 @@ use std::cmp;
 use std::collections::{HashMap, HashSet};
 use std::str::Lines;
 
+use serde::{Deserialize, Serialize};
 use unicode_width::UnicodeWidthStr;
+use uuid::Uuid;
+use rand::{thread_rng, Rng};
+use indoc::indoc;
 
+#[derive(Serialize, Deserialize)]
 pub struct Entity {
     pub name: String,
     pub model: String,
@@ -58,14 +63,79 @@ impl Entity {
     }
 }
 
-pub struct State {
-    pub current: String,
+#[derive(Serialize, Deserialize)]
+pub struct Game {
     pub entities: HashMap<String, Entity>,
     pub stage_max_x: i32,
     pub stage_max_y: i32,
 }
 
-impl State {
+impl Game {
+    pub fn new(stage_max_x: i32, stage_max_y: i32) -> Self {
+        Game { entities: Default::default(), stage_max_x, stage_max_y }
+    }
+
+    pub fn seed_environment(self: &mut Self) {
+
+        let id = Uuid::new_v4().to_string();
+        self.entities.insert(id.clone(), Entity {
+            name: "cactus".to_string(),
+            model: "🌵".to_string(),
+            //model: "X".to_string(),
+            id: id.clone(),
+            x: 16,
+            y: 10,
+        });
+
+        let id = Uuid::new_v4().to_string();
+        self.entities.insert(id.clone(), Entity {
+            name: "cow".to_string(),
+            model: "🐄".to_string(),
+            //model: "X".to_string(),
+            id: id.clone(),
+            x: 20,
+            y: 12,
+        });
+
+        let id = Uuid::new_v4().to_string();
+        self.entities.insert(id.clone(), Entity {
+            name: "desert".to_string(),
+            model: indoc!("🦂🌵🌵
+                       🌵🦂🌵️").to_string(),
+            //model: indoc!("XXX
+            //               MMM").to_string(),
+            id: id.clone(),
+            x: 16,
+            y: 14,
+        });
+
+        let mut rng = thread_rng();
+
+        let id = Uuid::new_v4().to_string();
+        self.entities.insert(id.clone(), Entity {
+            name: "horse".to_string(),
+            model: "🐎".to_string(),
+            //model: "X".to_string(),
+            id: id.clone(),
+            x: rng.gen_range(30, self.stage_max_x),
+            y: rng.gen_range(1, self.stage_max_y),
+        });
+
+        for _ in 1..=15 {
+            let id = Uuid::new_v4().to_string();
+            let x = rng.gen_range(0, self.stage_max_x);
+            let y = rng.gen_range(1, self.stage_max_y);
+
+            self.entities.insert(id.clone(), Entity {
+                name: "cactus".to_string(),
+                model: "🌵".to_string(),
+                id,
+                x,
+                y,
+            });
+        }
+    }
+
     pub fn handle_move(self: &mut Self, id: &String, requested_x: i32, requested_y: i32) {
         // TODO: filter other entities if they are not within reach
 
@@ -93,9 +163,9 @@ impl State {
 
                 // don't escape the stage!
                 new_x = cmp::max(new_x, 0);
-                new_x = cmp::min(new_x, self.stage_max_x - 2);
+                new_x = cmp::min(new_x, self.stage_max_x - entity.get_width() as i32);
                 new_y = cmp::max(new_y, 0);
-                new_y = cmp::min(new_y, self.stage_max_y - 1);
+                new_y = cmp::min(new_y, self.stage_max_y - entity.get_height() as i32);
 
                 // don't collide with other entities!
                 for hitbox_y in 0..entity.get_height() {

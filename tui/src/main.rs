@@ -9,10 +9,9 @@ use structopt::StructOpt;
 //use tokio::prelude::*;
 use uuid::Uuid;
 
-use indoc::indoc;
 
 use crate::engine::*;
-use libsheriff::{Entity, State};
+use libsheriff::{Entity, Game};
 
 mod engine;
 
@@ -55,72 +54,12 @@ pub async fn main() -> CliResult {
     };
 
 
-    let mut state = State {
-        current: "game".to_string(),
-        stage_max_x: window.get_max_x(),
-        stage_max_y: window.get_max_y(),
-        entities: Default::default(),
-    };
+    let mut state = Game::new(window.get_max_x(), window.get_max_y());
+
+    state.seed_environment();
 
     state.entities.insert(sheriff.id.clone(), sheriff);
 
-    let id = Uuid::new_v4().to_string();
-    state.entities.insert(id.clone(), Entity {
-        name: "cactus".to_string(),
-        model: "🌵".to_string(),
-        //model: "X".to_string(),
-        id: id.clone(),
-        x: 16,
-        y: 10,
-    });
-
-    let id = Uuid::new_v4().to_string();
-    state.entities.insert(id.clone(), Entity {
-        name: "cow".to_string(),
-        model: "🐄".to_string(),
-        //model: "X".to_string(),
-        id: id.clone(),
-        x: 20,
-        y: 12,
-    });
-
-    let id = Uuid::new_v4().to_string();
-    state.entities.insert(id.clone(), Entity {
-        name: "desert".to_string(),
-        model: indoc!("🦂🌵🌵
-                       🌵🦂🌵️").to_string(),
-        //model: indoc!("XXX
-        //               MMM").to_string(),
-        id: id.clone(),
-        x: 16,
-        y: 14,
-    });
-
-    let mut rng = thread_rng();
-
-    let id = Uuid::new_v4().to_string();
-    state.entities.insert(id.clone(), Entity {
-        name: "horse".to_string(),
-        model: "🐎".to_string(),
-        //model: "X".to_string(),
-        id: id.clone(),
-        x: rng.gen_range(30, window.get_max_x() - 2),
-        y: rng.gen_range(1, window.get_max_y() - 2),
-    });
-
-    for _ in 1..=15 {
-        let id = Uuid::new_v4().to_string();
-        let x = rng.gen_range(0, window.get_max_x() - 2);
-        let y = rng.gen_range(1, window.get_max_y() - 2);
-
-        state.entities.insert(id.clone(), Entity {
-            name: "cactus".to_string(),
-            model: "🌵".to_string(),
-            id,
-            x,
-            y,
-        });
-    }
 
     loop {
         draw_window(&window, &state);
