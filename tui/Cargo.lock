@@ -488,6 +488,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dea0c0405123bba743ee3f91f49b1c7cfb684eef0da0a50110f758ccf24cdff0"
 
 [[package]]
+name = "libsheriff"
+version = "1.0.0"
+dependencies = [
+ "indoc",
+ "rand",
+ "tokio",
+ "unicode-width",
+ "uuid",
+]
+
+[[package]]
 name = "log"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -583,11 +594,12 @@ dependencies = [
 
 [[package]]
 name = "move-the-sheriff"
-version = "2.0.0"
+version = "3.0.0"
 dependencies = [
  "ctrlc",
  "futures",
  "indoc",
+ "libsheriff",
  "pancurses",
  "quicli",
  "rand",

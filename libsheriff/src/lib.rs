@@ -2,18 +2,47 @@ use std::cmp;
 use std::collections::{HashMap, HashSet};
 use std::str::Lines;
 
-use pancurses::Window;
 use unicode_width::UnicodeWidthStr;
 
 pub struct Entity {
-    pub(crate) name: String,
-    pub(crate) model: String,
-    pub(crate) id: String,
-    pub(crate) x: i32,
-    pub(crate) y: i32,
+    pub name: String,
+    pub model: String,
+    pub id: String,
+    pub x: i32,
+    pub y: i32,
 }
 
+/// # Examples
+///
+/// ```
+/// use libsheriff::Entity;
+/// let mut e = Entity::new("sheriff", "🤠", "abc123", (10, 11));
+/// assert_eq!(e.x, 10);
+/// assert_eq!(e.y, 11);
+///
+/// assert_eq!(e.get_width(), 2);
+/// assert_eq!(e.get_height(), 1);
+///
+/// e.set_pos(20, 21);
+///
+/// assert_eq!(e.x, 20);
+/// assert_eq!(e.y, 21);
+/// ```
 impl Entity {
+    pub fn new(name: &str, model: &str, id: &str, pos: (i32, i32)) -> Self {
+        Entity {
+            name: name.to_string(),
+            model: model.to_string(),
+            id: id.to_string(),
+            x: pos.0,
+            y: pos.1,
+        }
+    }
+    pub fn set_pos(&mut self, x: i32, y: i32) {
+        self.x = x;
+        self.y = y;
+    }
+
     pub fn get_lines(self: &Self) -> Lines<'_> {
         self.model.lines()
     }
@@ -85,31 +114,3 @@ impl State {
         }
     }
 }
-
-fn draw_main_stage(window: &Window, state: &State) {
-    window.printw(format!("Welcome to “Move the Sheriff”! press <q> to quit\n"));
-    for (_id, entity) in state.entities.iter() {
-        let mut line_number = 0;
-        for line in entity.get_lines() {
-            window.mvaddstr(entity.y + line_number, entity.x, line);
-            line_number += 1;
-        }
-    }
-}
-
-pub fn draw_window(window: &Window, state: &State) {
-    window.erase();
-    draw_main_stage(&window, &state);
-    window.refresh();
-}
-
-pub fn handle_input(state: &mut State, id: &String, input: char) {
-    match input {
-        'w' | 'k' => state.handle_move(id, 0, -1),
-        'a' | 'h' => state.handle_move(id, -1, 0),
-        's' | 'j' => state.handle_move(id, 0, 1),
-        'd' | 'l' => state.handle_move(id, 1, 0),
-        _ => (),
-    }
-}
-

@@ -1,10 +1,16 @@
-name: Rust
+name: Rust Builds
 
 on:
   push:
-    branches: [ master ]
+    paths:
+      - 'tui/**'
+      - 'libsheriff/**'
+      - 'server/**'
   pull_request:
-    branches: [ master ]
+    paths:
+      - 'tui/**'
+      - 'libsheriff/**'
+      - 'server/**'
 
 jobs:
   build:
@@ -17,7 +23,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libncurses-dev
-      - name: Build
-        run: cargo build --verbose
-      - name: Run tests
-        run: cargo test --verbose
+      - name: libsheriff Build
+        working-directory: libsheriff
+        run: cargo build
+      - name: libsheriff tests
+        working-directory: libsheriff
+        run: cargo test
+      - name: TUI Build
+        working-directory: tui
+        run: cargo build
+      - name: TUI tests
+        working-directory: tui
+        run: cargo test
+      - name: Server Build
+        working-directory: server
+        run: cargo build
+      - name: Server Tests
+        working-directory: server
+        run: cargo test

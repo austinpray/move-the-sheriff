@@ -1,0 +1,22 @@
+[package]
+name = "move-the-sheriff"
+version = "3.0.0"
+authors = ["Austin Pray <austin@austinpray.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+libsheriff = {path = "../libsheriff"}
+
+ctrlc = "3.1.4"
+futures = "0.3"
+pancurses = "0.16"
+quicli = "0.4"
+structopt = "0.2"
+tokio = { version = "0.2", features = ["full"] }
+uuid = { version = "0.8", features = ["v4"] }
+rand = "0.7.3"
+indoc = "0.3"
+unicode-width = "0.1.7"
